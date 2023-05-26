@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture de QR Code</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-reader/1.0.0/qrcode-reader.min.js"></script>
+</head>
+<body>
+  <!-- Le reste du code ira ici -->
+</body>
+</html>
+<!-- ... -->
+<body>
+    <h1>Lecture de QR Code</h1>
+    <video id="camera" width="300" height="300" autoplay></video>
+    <h2>Résultat:</h2>
+    <pre id="result"></pre>
+    <script>
+      // Le code JavaScript ira ici
+    </script>
+  </body>
+  <!-- ... -->
+<!-- ... -->
+<script>
+    const video = document.getElementById('camera');
+    const result = document.getElementById('result');
+  
+    // Accéder à la caméra
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true);
+        video.play();
+        scanQRCode();
+      })
+      .catch(err => {
+        console.error('Erreur lors de l\'accès à la caméra:', err);
+      });
+  
+    // Lire le QR code
+    function scanQRCode() {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      const qr = new QrCode();
+  
+      qr.callback = (err, value) => {
+        if (err) {
+          console.error('Erreur lors de la lecture du QR code:', err);
+          return;
+        }
+  
+        // Afficher le résultat
+        result.textContent = value.result;
+      };
+  
+      // Analyser l'image de la vidéo
+      setInterval(() => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        qr.decode(canvas.toDataURL('image/png'));
+      }, 500);
+    }
+  </script>
+  <!-- ... -->
+    
+
+
